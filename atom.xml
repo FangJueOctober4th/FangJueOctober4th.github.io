@@ -6,7 +6,7 @@
   <link href="https://www.fomal.cc/atom.xml" rel="self"/>
   
   <link href="https://www.fomal.cc/"/>
-  <updated>2024-09-01T14:24:54.312Z</updated>
+  <updated>2024-09-01T15:19:16.319Z</updated>
   <id>https://www.fomal.cc/</id>
   
   <author>
@@ -21,18 +21,16 @@
     <link href="https://www.fomal.cc/posts/37a1071.html"/>
     <id>https://www.fomal.cc/posts/37a1071.html</id>
     <published>2024-09-01T09:21:11.000Z</published>
-    <updated>2024-09-01T14:24:54.312Z</updated>
+    <updated>2024-09-01T15:19:16.319Z</updated>
     
-    <content type="html"><![CDATA[<h2 id="排行榜特点">排行榜特点</h2><p>在互联网应用中，排行榜服务一般具有以下特点：</p><ul><li>曝光量大：排行榜往往会受到大量用户的关注，这也意味着会带来高并发读取排行榜的请求。</li><li>竞争激烈：用户为了获取流量优势和排名奖励，可能会受到参与者的激烈竞争，这将要求排行榜能够应对高并发的写请求。</li><li>实时变化：排名情况在实时变化，玩家会随时关心自己的最新排名。</li><li>周期滚动：排行榜可能会以月、周、天为周期进行滚动。</li></ul><p>因此，在实现排行榜服务时，需要重点考虑高并发读写、实时展示排名、轻松支持周期滚动的能力。</p><h2 id="使用什么存储系统来维护排行榜">使用什么存储系统来维护排行榜</h2><p>在设计排行榜时，首先需要考虑的是使用什么存储系统来维护排行榜。<br>如果使用关系型数据库例如MySql来维护的话，其本身对于高并发的请求就比较弱；再加上需要支持按照得分进行排序，需要使用select和order by语句来实现。<br>因此该方法具有以下缺点：</p><ul><li>性能开销：在数据量大的情况下，排序操作会耗费大量的系统资源和处理时间，尤其是多字段排序时，查询效率更低。</li><li>磁盘I/O：当需要对大量数据进行排序的时候，可能会使用临时表或者磁盘存储技术，使排序操作不再全部运行在内存当中。但这需要进行大量的磁盘读写操作，从而导致查询响应时间变长。</li></ul><p>因此，排行榜服务并不太适合使用关系型数据库。排行榜一般是根据某种得分进行排序，因此可以考虑使用Redis的ZSET结构进行维护。</p>]]></content>
+    <content type="html"><![CDATA[<h2 id="排行榜特点"><a href="#排行榜特点" class="headerlink" title="排行榜特点"></a>排行榜特点</h2><p>在互联网应用中，排行榜服务一般具有以下特点：</p><ul><li>曝光量大：排行榜往往会受到大量用户的关注，这也意味着会带来高并发读取排行榜的请求。</li><li>竞争激烈：用户为了获取流量优势和排名奖励，可能会受到参与者的激烈竞争，这将要求排行榜能够应对高并发的写请求。</li><li>实时变化：排名情况在实时变化，玩家会随时关心自己的最新排名。</li><li>周期滚动：排行榜可能会以月、周、天为周期进行滚动。</li></ul><p>因此，在实现排行榜服务时，需要重点考虑高并发读写、实时展示排名、轻松支持周期滚动的能力。</p><h2 id="使用什么存储系统来维护排行榜"><a href="#使用什么存储系统来维护排行榜" class="headerlink" title="使用什么存储系统来维护排行榜"></a>使用什么存储系统来维护排行榜</h2><p>在设计排行榜时，首先需要考虑的是使用什么存储系统来维护排行榜。<br>如果使用关系型数据库例如MySql来维护的话，其本身对于高并发的请求就比较弱；再加上需要支持按照得分进行排序，需要使用select和order by语句来实现。<br>因此该方法具有以下缺点：</p><ul><li>性能开销：在数据量大的情况下，排序操作会耗费大量的系统资源和处理时间，尤其是多字段排序时，查询效率更低。</li><li>磁盘I/O：当需要对大量数据进行排序的时候，可能会使用临时表或者磁盘存储技术，使排序操作不再全部运行在内存当中。但这需要进行大量的磁盘读写操作，从而导致查询响应时间变长。</li></ul><p>因此，排行榜服务并不太适合使用关系型数据库。排行榜一般是根据某种得分进行排序，因此可以考虑使用Redis的ZSET结构进行维护。</p><h2 id="使用ZSET"><a href="#使用ZSET" class="headerlink" title="使用ZSET"></a>使用ZSET</h2><p>我们可以使用一个ZSET对象来表示一个具体的排行榜，其中存储了用户ID和得分。</p><ul><li>key：排行榜名称</li><li>Member：存储用户ID</li><li>Score：存储得分</li></ul><p>这里我们以怪物Boss击杀排行榜举例，key为”Monster_Boss_Hunter”，member为玩家ID，score为击杀的怪物Boss数量。</p><p>对于排行榜更新，可以使用“zincrby key score member”命令，例如当ID为666的玩家在副本中新击杀了20个怪物Boss，可以如下命令在排行榜上加20分：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zincrby Monster_Boss_Hunter 20 666</span><br></pre></td></tr></table></figure><br>对于排行榜读取，可以使用“zrevrange Monster_Boss_Hunter start top withscores”命令，此命令可以按照得分从大到小的顺序返回member和其对应的得分。<br>其中，start表示从排名为start+1的Member开始查询，top表示到排名为top+1的Member结束查询，若top=-1表示查询整个ZSET对象，withscores表示展示每个Member对应的Score。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zrevrange Monster_Boss_Hunter 0 -1 withscores</span><br></pre></td></tr></table></figure><br>如果只是想要获取某个玩家的排名，可以使用“zrevrank key member”命令，该命令返回member在ZSET中按从大到小排序的名次，偏移量是从0开始的。<br>需要注意的是zrevrank不返回得分，如果需要返回得分则需只能额外执行zscore命令来获取。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">-- 获取玩家666的排名</span><br><span class="line">zrevrank Monster_Boss_Hunter 666</span><br><span class="line"></span><br><span class="line">-- 获取玩家666的得分</span><br><span class="line">zscore Monster_Boss_Hunter 666</span><br></pre></td></tr></table></figure></p><p>那么我们应该如何实现排行榜的周期滚动需求呢？其实也很简单，只需要在key上增加对应的周期数来区分同一排行榜的不同周期排名。<br>例如怪物Boss击杀排行榜是按月份进行统计的，因此我们可以把key改为“Monster<em>Boss_Hunter</em>{year}_{month}”，<br>例如2024年9月的怪物Boss击杀排行榜的key为“Monster_Boss_Hunter_2024_9”，当需要更新排行榜时根据当前时间的年月来获取排行榜具体的key再去执行更新操作。</p><p>借助ZSET结构，我们已经满足排行榜的基本要求了，但这里面还存在两个问题，分别是幂等更新和同积分排行处理。</p>]]></content>
     
     
       
       
-    <summary type="html">&lt;h2 id=&quot;排行榜特点&quot;&gt;排行榜特点&lt;/h2&gt;
-&lt;p&gt;在互联网应用中，排行榜服务一般具有以下特点：&lt;/p&gt;
+    <summary type="html">&lt;h2 id=&quot;排行榜特点&quot;&gt;&lt;a href=&quot;#排行榜特点&quot; class=&quot;headerlink&quot; title=&quot;排行榜特点&quot;&gt;&lt;/a&gt;排行榜特点&lt;/h2&gt;&lt;p&gt;在互联网应用中，排行榜服务一般具有以下特点：&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;曝光量大：排行榜往往会受到大量用户的关注，这也意味着会带来高并发读取排行榜的请求。&lt;/li&gt;
-&lt;li&gt;竞争激烈：用户为了获取流量优势和排名奖励，可能会</summary>
+&lt;li&gt;曝光量大：排行榜往往会受到大量用户的关注，这</summary>
       
     
     
