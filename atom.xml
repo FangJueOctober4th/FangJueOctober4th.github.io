@@ -6,7 +6,7 @@
   <link href="https://www.fomal.cc/atom.xml" rel="self"/>
   
   <link href="https://www.fomal.cc/"/>
-  <updated>2024-09-01T09:22:40.501Z</updated>
+  <updated>2024-09-01T10:25:48.497Z</updated>
   <id>https://www.fomal.cc/</id>
   
   <author>
@@ -21,13 +21,15 @@
     <link href="https://www.fomal.cc/posts/37a1071.html"/>
     <id>https://www.fomal.cc/posts/37a1071.html</id>
     <published>2024-09-01T09:21:11.000Z</published>
-    <updated>2024-09-01T09:22:40.501Z</updated>
+    <updated>2024-09-01T10:25:48.497Z</updated>
     
     
     
     
     <category term="系统架构设计" scheme="https://www.fomal.cc/categories/%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/"/>
     
+    
+    <category term="排行榜" scheme="https://www.fomal.cc/tags/%E6%8E%92%E8%A1%8C%E6%A6%9C/"/>
     
   </entry>
   
