@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>方觉子春零四🌙</title>
+  
+  <subtitle>有趣有盼，热爱生活</subtitle>
+  <link href="https://www.fomal.cc/atom.xml" rel="self"/>
+  
+  <link href="https://www.fomal.cc/"/>
+  <updated>2024-09-01T09:22:40.501Z</updated>
+  <id>https://www.fomal.cc/</id>
+  
+  <author>
+    <name>halokk🥝</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>排行榜服务设计</title>
+    <link href="https://www.fomal.cc/posts/37a1071.html"/>
+    <id>https://www.fomal.cc/posts/37a1071.html</id>
+    <published>2024-09-01T09:21:11.000Z</published>
+    <updated>2024-09-01T09:22:40.501Z</updated>
+    
+    
+    
+    
+    <category term="系统架构设计" scheme="https://www.fomal.cc/categories/%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/"/>
+    
+    
+  </entry>
+  
+</feed>
